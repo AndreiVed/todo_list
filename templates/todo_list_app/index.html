@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% block title %}
+  <title>TODO List</title>
+{% endblock %}
+{% block content %}
+    <h2>TODO List
+      <a href="{% url 'todo_list_app:task-create' %}" class="btn btn-primary link-to-page">Add task</a>
+    </h2>
+
+    {% for task in task_list %}
+      <div class="card">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <h4><strong>{{ task.content }}</strong>
+              {% if task.is_completed %}
+                <span>Done</span>
+              {% else %}
+                <span style="color: red;">Not done</span>
+              {% endif %}
+            </h4>
+            </a>
+            <p>Created: {{ task.created_date }}
+              {% if task.deadline %}
+                <span style="color: darkred">
+                  Deadline: {{ task.deadline }}
+                </span>
+              {% endif %}
+            </p>
+            <h5 class="text-muted">Tags:
+              {% for tag in task.tags.all %}
+                {{ tag.name }}
+              {% endfor %}
+            </h5>
+            <div class="flex-container" style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              ">
+              <div class="left-links">
+                <a href="{% url 'todo_list_app:task-update' pk=task.id %}">Update</a>
+                <a href="{% url 'todo_list_app:task-delete' pk=task.id %}">Delete</a>
+              </div>
+
+              <div class="right-button">
+                {% if task.is_completed %}
+                  <form method="post" action="{% url 'todo_list_app:task-toggle' pk=task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success link-to-page">
+                      Complete
+                    </button>
+                  </form>
+                {% else %}
+                  <form method="post" action="{% url 'todo_list_app:task-toggle' pk=task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-secondary link-to-page">
+                      Undo
+                    </button>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+
+          </li>
+        </ul>
+      </div>
+    {% endfor %}
+{% endblock %}

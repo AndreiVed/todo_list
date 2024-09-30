@@ -13,15 +13,11 @@ class Tag(models.Model):
 
 
 class Task(models.Model):
-    name = models.CharField(max_length=68, unique=True)
-    description = models.TextField()
+    content = models.CharField(max_length=255, null=True, blank=True)
     created_date = models.DateTimeField(auto_now=True)
     deadline = models.DateField(null=True, blank=True)
     is_completed = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag, related_name="tags")
 
     class Meta:
-        ordering = ["deadline"]
-
-    def get_absolute_url(self):
-        return reverse('task_manager:task-detail', kwargs={"pk": self.pk})
+        ordering = ["-created_date"]
